@@ -31,19 +31,22 @@ jobs:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
         HOST: ${{ secrets.EC2_HOST }}
         USER: ubuntu
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       run: |
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
-         
-        ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER}@${HOST} << 'EOF'
-          cd /home/ubuntu/app
-          git pull origin main
-          docker-compose down
-          docker-compose pull
-          docker-compose up -d
-          docker system prune -af
-        EOF
-         
+
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER}@${HOST} << EOF
+          # Stop old container if it exists
+          docker stop fastapi-app || true
+          docker rm fastapi-app || true
+
+          # Pull latest image from Docker Hub
+          docker pull $DOCKER_USERNAME/fastapi-app:latest
+
+          # Run the container
+          docker run -d -p 8000:8000 --name fastapi-app $DOCKER_USERNAME/fastapi-app:latest
+
         rm -f private_key.pem
      
     - name: Verify deployment
@@ -60,4 +63,5 @@ jobs:
           echo "❌ Deployment failed!"
 
         fi
+
 

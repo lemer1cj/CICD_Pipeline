@@ -63,6 +63,7 @@ jobs:
     - name: Build Docker image
       run: |
         docker build -t fastapi-app:${{ github.sha }} .
+      working-directory: ${{ github.workspace }}
      
     - name: Test Docker image
       run: |

@@ -49,7 +49,7 @@ jobs:
     - name: Verify deployment
       run: |
         sleep 10
-        curl -f http://${{ secrets.EC2_HOST }}/health || exit 1
+        curl -f http://${{ secrets.EC2_HOST }}:8000/health || exit 1
      
     - name: Notify deployment
       if: always()
@@ -60,3 +60,4 @@ jobs:
           echo "❌ Deployment failed!"
 
         fi
+

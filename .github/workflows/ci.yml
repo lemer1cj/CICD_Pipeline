@@ -59,6 +59,12 @@ jobs:
      
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
+
+    - name: Debug current directory
+      run: |
+        pwd
+        ls -al
+
      
     - name: Build Docker image
       run: |
